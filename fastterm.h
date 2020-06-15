@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <cstdio>
+#include "fastqueryacunify.h"
 
 #define MAXVARS (1024 * 1024 * 16)
 #define MAXFUNCS 2048
