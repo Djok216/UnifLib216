@@ -14,6 +14,7 @@ struct FastQueryACUnify {
 
   FastQueryACUnify(FastTerm t1, FastTerm t2);
   std::vector<FastSubst> solve();
+  std::vector<FastSubst> solve(UnifEqSystem ues);
 
 private:
   std::vector<FastSubst> solveAC(UnifEq ues);

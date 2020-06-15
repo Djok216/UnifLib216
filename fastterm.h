@@ -159,9 +159,11 @@ FastFunc newFunc(const char *name, FastSort resultSort, uint32 arity, FastSort *
 
 FastFunc newInterpretedFunc(const char *name, FastSort resultSort, uint32 arity, FastSort *args);
 
+FastFunc newCFunc(const char *name, FastSort sort);
 FastFunc newACFunc(const char *name, FastSort sort);
 FastFunc newACUFunc(const char *name, FastFunc uElem);
 FastFunc getUnityElement(FastFunc func);
+bool isFuncC(FastFunc func);
 bool isFuncAC(FastFunc func);
 bool validFastFunc(FastFunc func);
 

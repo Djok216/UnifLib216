@@ -41,6 +41,7 @@ FastTerm termTrue;
 FastTerm termFalse;
 
 bool isAC[MAXFUNCS];
+bool isC[MAXFUNCS];
 FastFunc uElem[MAXFUNCS];
 
 uint32 funcCount = 0;
@@ -491,6 +492,7 @@ FastFunc newTempConst(FastSort sort)
   resultSorts[funcCount] = sort;
   uElem[funcCount] = MISSING_UELEM;
   isAC[funcCount] = false;
+  isC[funcCount] = false;
   FastFunc result = funcCount++;
   assert(validFastFunc(result));
   return result;
@@ -518,6 +520,7 @@ FastFunc newConst(const char *name, FastSort sort)
   resultSorts[funcCount] = sort;
   uElem[funcCount] = MISSING_UELEM;
   isAC[funcCount] = false;
+  isC[funcCount] = false;
   FastFunc result = funcCount++;
   assert(validFastFunc(result));
   return result;
@@ -555,6 +558,35 @@ FastFunc newFunc(const char *name, FastSort resultSort, uint32 argCount, FastSor
   }
   uElem[funcCount] = MISSING_UELEM;
   isAC[funcCount] = false;
+  isC[funcCount] = false;
+  FastFunc result = funcCount++;
+  assert(validFastFunc(result));
+  return result;
+}
+
+FastFunc newCFunc(const char *name, FastSort sort) {
+  if (funcCount == MAXFUNCS) {
+    fprintf(stderr, "Too many functions.\n");
+    exit(-1);
+  }
+  if (arityDataIndex + 2 > MAXARITYDATA) {
+    fprintf(stderr, "Too many function arguments.\n");
+    exit(-1);
+  }
+  arities[funcCount] = 2;
+  funcNames[funcCount] = strdup(name);
+  if (funcNames[funcCount] == 0) {
+    fprintf(stderr, "Not enough memory to duplicate C string (function name).\n");
+    exit(-1);
+  }
+  resultSorts[funcCount] = sort;
+  arityIndex[funcCount] = arityDataIndex;
+  for (uint i = 0; i < 2; ++i) {
+    arityData[arityDataIndex++] = sort;
+  }
+  uElem[funcCount] = MISSING_UELEM;
+  isAC[funcCount] = false;
+  isC[funcCount] = true;
   FastFunc result = funcCount++;
   assert(validFastFunc(result));
   return result;
@@ -582,6 +614,7 @@ FastFunc newACFunc(const char *name, FastSort sort) {
   }
   uElem[funcCount] = MISSING_UELEM;
   isAC[funcCount] = true;
+  isC[funcCount] = false;
   FastFunc result = funcCount++;
   assert(validFastFunc(result));
   return result;
@@ -609,6 +642,7 @@ FastFunc newACUFunc(const char *name, FastFunc uElem) {
   }
   ::uElem[funcCount] = uElem;
   isAC[funcCount] = true;
+  isC[funcCount] = false;
   FastFunc result = funcCount++;
   assert(validFastFunc(result));
   return result;
@@ -617,6 +651,11 @@ FastFunc newACUFunc(const char *name, FastFunc uElem) {
 FastFunc getUnityElement(FastFunc func) {
   assert(validFastFunc(func));
   return uElem[func]; 
+}
+
+bool isFuncC(FastFunc func) {
+  assert(validFastFunc(func));
+  return isC[func];
 }
 
 bool isFuncAC(FastFunc func) {
@@ -653,6 +692,8 @@ const char *getFuncName(FastTerm func)
 
 bool eq_func(FastFunc func1, FastFunc func2)
 {
+  if (func1 == MISSING_UELEM) return func1 == func2;
+  if (func2 == MISSING_UELEM) return func1 == func2;
   assert(validFastFunc(func1));
   assert(validFastFunc(func2));
   return func1 == func2;

@@ -7,20 +7,21 @@
 #include <sstream>
 #include <set>
 #include <algorithm>
+#include <functional>
 #include <iostream>
 #include <map>
 
 using namespace std;
+
+uint32 termDataSize = 0;
+uint32 termData[MAXDATA];
+vector<FastTerm> *varsAndFreshCache[MAXDATA];
 
 void initFastTerm()
 {
   initSorts();
   initFuncs();
 }
-
-uint32 termDataSize = 0;
-uint32 termData[MAXDATA];
-vector<FastTerm> *varsAndFreshCache[MAXDATA];
 
 bool validFastVarTerm(FastTerm term)
 {
@@ -309,10 +310,6 @@ char buffer[1024];
 
 bool eq_term(FastTerm t1, FastTerm t2)
 {
-  // printTerm(t1, buffer, 1024);
-  // printf("eq1 %s (%d)\n", buffer, t1);
-  // printTerm(t1, buffer, 1024);
-  // printf("eq2 %s (%d)\n", buffer, t2);
   assert(validFastTerm(t1));
   assert(validFastTerm(t2));
   if (isFuncTerm(t1) && isFuncTerm(t2)) {
@@ -321,17 +318,37 @@ bool eq_term(FastTerm t1, FastTerm t2)
     if (!eq_func(func1, func2)) {
       return false;
     }
-    FastTerm *args1 = args(t1);
-    FastTerm *args2 = args(t2);
     assert(getArity(func1) == getArity(func2));
-    return eq_term_list(args1, args2, getArity(func1));
+    if (getArity(func1) == 0) return true;
+    if (!isFuncAC(func1)) return eq_term_list(args(t1), args(t2), getArity(func1));
+    // is AC Term
+    vector<FastTerm> args1, args2;
+    function<void(FastTerm, FastFunc, vector<FastTerm>&)> getArgs;
+    getArgs = [&getArgs](FastTerm t, FastFunc f, vector<FastTerm>& argsStar) {
+      for (int i = 0; i < getArity(getFunc(t)); ++i) {
+        FastTerm arg = getArg(t, i);
+        if (isVariable(arg) || !eq_func(f, getFunc(arg))) {
+          argsStar.push_back(arg);
+          continue;
+        }
+        getArgs(arg, f, argsStar);
+      }
+    };
+    getArgs(t1, func1, args1);
+    getArgs(t2, func2, args2);
+    if (args1.size() != args2.size()) return false;
+    auto argsComp = [](FastTerm t1, FastTerm t2) {
+      if (isFuncTerm(t1) == isFuncTerm(t2)) return toString(t1) < toString(t2);
+      return isFuncTerm(t1);
+    };
+    sort(args1.begin(), args1.end(), argsComp);
+    sort(args2.begin(), args2.end(), argsComp);
+    return eq_term_list(args1.data(), args2.data(), args1.size());
   }
-  else if (isVariable(t1) && isVariable(t2)) {
+  if (isVariable(t1) && isVariable(t2)) {
     return eq_var(t1, t2);
   }
-  else {
-    return false;
-  }
+  return false;
 }
 
 bool containsUnboundVariable(FastTerm term, FastVar var) {
@@ -596,8 +613,7 @@ void printToOss(FastTerm term, ostringstream &oss)
 {
   if (isVariable(term)) {
     assert(/* 0 <= term && */term < MAXVARS);
-    //oss << getVarName(term);
-    oss << term;
+    oss << getVarName(term);// << "(" << getSortName(getSort(term)) << ")";
   }
   else {
     assert(isFuncTerm(term));
@@ -609,8 +625,7 @@ void printToOss(FastTerm term, ostringstream &oss)
     if (getArity(func) > 0) {
       oss << "(";
     }
-    //oss << getFuncName(func);
-    oss << func;
+    oss << getFuncName(func);// << "(" << getSortName(getSort(term)) << ")";
     for (uint i = 0; i < getArity(func); ++i) {
       oss << " ";
       printToOss(termData[index + i + 1], oss);

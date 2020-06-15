@@ -7,6 +7,7 @@
 
 
 struct UnifEqSystem : std::vector<UnifEq> {
+  UnifEqSystem();
   UnifEqSystem(FastTerm t1, FastTerm t2);
   UnifEqSystem(const UnifEq &eq);
   UnifEqSystem(const UnifEqSystem &ues);
