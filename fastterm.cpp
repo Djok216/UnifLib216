@@ -320,7 +320,12 @@ bool eq_term(FastTerm t1, FastTerm t2)
     }
     assert(getArity(func1) == getArity(func2));
     if (getArity(func1) == 0) return true;
-    if (!isFuncAC(func1)) return eq_term_list(args(t1), args(t2), getArity(func1));
+    if (!isFuncAC(func1) && !isFuncC(func1)) return eq_term_list(args(t1), args(t2), getArity(func1));
+    if (isFuncC(func1)) {
+      bool areEqual = eq_term(args(t1)[0], args(t2)[0]) && eq_term(args(t1)[1], args(t2)[1]);
+      areEqual |= eq_term(args(t1)[0], args(t2)[1]) && eq_term(args(t1)[1], args(t2)[0]);
+      return areEqual;
+    }
     // is AC Term
     vector<FastTerm> args1, args2;
     function<void(FastTerm, FastFunc, vector<FastTerm>&)> getArgs;
