@@ -44,14 +44,20 @@ vector<int> FastQueryACUnify::fromMapToVector(const map<FastTerm, int> &M) {
 }
 
 FastTerm FastQueryACUnify::createFuncWithSameVar(int cnt, FastTerm var, FastFunc f, FastTerm unityElement) {
-  if (!cnt) {
-    return unityElement;
-  }
-  FastTerm ans = var;
-  while (cnt > 1) {
-    FastTerm p[2] = {ans, var};
-    ans = newFuncTerm(f, p);
-    --cnt;
+  if (!cnt) return unityElement;
+  constexpr int kUndefinedTerm = -1;
+  FastTerm ans = kUndefinedTerm;
+  for (int bit = 30; bit >= 0; --bit) {
+    if (ans != kUndefinedTerm) {
+      FastTerm p[2] = {ans, ans};
+      ans = newFuncTerm(f, p);
+    }
+    if ((cnt & (1 << bit)) == 0) continue;
+    if (ans == kUndefinedTerm) ans = var;
+    else {
+      FastTerm p[2] = {ans, var};
+      ans = newFuncTerm(f, p);
+    }
   }
   return ans;
 }
