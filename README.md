@@ -4,7 +4,7 @@ Just add ``#include "UnifLib216.h"``to your code.
 # Example
 Below is an example for the equation ``f(y1, x5, g(x4)) =? f(y2, g(x2))``
 ```C++
-// solve AC-unify: f(y1, x5, g(x4) =? f(y2, g(x2))
+// solve AC-unify: f(y1, x5, g(x4)) =? f(y2, g(x2))
 // Unifications: 4
 // {y2 |-> f(_13, _14, g(x4)), y1 |-> _13, x5 |-> f(_14, g(x2))}
 // {y2 |-> f(_13, g(x4)), y1 |-> _13, x5 |-> g(x2)}
@@ -16,9 +16,7 @@ void example() {
   FastVar x5 = newVar("x5", fastStateSort());
   FastVar y1 = newVar("y1", fastStateSort());
   FastVar y2 = newVar("y2", fastStateSort());
-  FastSort sorts[6] = {fastStateSort(), fastStateSort(),
-             fastStateSort(), fastStateSort(),
-             fastStateSort(), fastStateSort()};
+  FastSort sorts[2] = {fastStateSort(), fastStateSort()};
   FastFunc g = newFunc("g", fastStateSort(), 1, sorts);
   FastFunc f = newACFunc("f", fastStateSort());
   FastTerm args[2] = {x4, x2};
