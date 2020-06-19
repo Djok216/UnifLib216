@@ -197,6 +197,7 @@ FastTerm getArg(FastTerm term, uint arg);
 FastSort getSort(FastTerm term);
 
 bool eq_term(FastTerm term1, FastTerm term2);
+bool eq_term_syntactic(FastTerm term1, FastTerm term2);
 
 FastTerm replaceConstWithVar(FastTerm term, FastTerm c, FastVar v);
 

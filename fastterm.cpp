@@ -356,6 +356,25 @@ bool eq_term(FastTerm t1, FastTerm t2)
   return false;
 }
 
+bool eq_term_syntactic(FastTerm term1, FastTerm term2) {
+  assert(validFastTerm(t1));
+  assert(validFastTerm(t2));
+  if (isFuncTerm(t1) && isFuncTerm(t2)) {
+    FastFunc func1 = getFunc(t1);
+    FastFunc func2 = getFunc(t2);
+    if (!eq_func(func1, func2)) {
+      return false;
+    }
+    assert(getArity(func1) == getArity(func2));
+    if (getArity(func1) == 0) return true;
+    return eq_term_list(args(t1), args(t2), getArity(func1));
+  }
+  if (isVariable(t1) && isVariable(t2)) {
+    return eq_var(t1, t2);
+  }
+  return false;
+}
+
 bool containsUnboundVariable(FastTerm term, FastVar var) {
   if (isVariable(term))
     return term == var;
