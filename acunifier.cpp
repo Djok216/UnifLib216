@@ -302,31 +302,12 @@ vector<FastSubst> ACUnifier::solve(UnifEqSystem ues) {
           // cerr << "sort of t1 " << getSortName(getSort(eq.t1)) << endl;
           // cerr << "sort of t2 " << getSortName(getSort(eq.t2)) << endl;
           // cerr << "subsort yes: " << eq.t1 << " " << eq.t2 << endl;
-          // subst.composeWith(eq.t1, eq.t2);
-          // ues.pop_back();
-          // for (auto &it : ues) {
-          //   it.t1 = applyUnitySubst(it.t1, eq.t1, eq.t2);
-          //   it.t2 = applyUnitySubst(it.t2, eq.t1, eq.t2);
-          // }
-          if (isVariable(eq.t2)) {
-            FastVar newVar = createFreshVariable(getSort(eq.t2));
-            subst.composeWith(eq.t1, newVar);
-            subst.composeWith(eq.t2, newVar);
-            ues.pop_back();
-            for (auto &it : ues) {
-              it.t1 = applyUnitySubst(it.t1, eq.t1, newVar);
-              it.t1 = applyUnitySubst(it.t1, eq.t2, newVar);
-              it.t2 = applyUnitySubst(it.t2, eq.t1, newVar);
-              it.t2 = applyUnitySubst(it.t2, eq.t2, newVar);
-            }
-          } else {
-            subst.composeWith(eq.t1, eq.t2);
-            ues.pop_back();
-            for (auto &it : ues) {
-              it.t1 = applyUnitySubst(it.t1, eq.t1, eq.t2);
-              it.t2 = applyUnitySubst(it.t2, eq.t1, eq.t2);
-            }
-          }
+           subst.composeWith(eq.t1, eq.t2);
+           ues.pop_back();
+           for (auto &it : ues) {
+             it.t1 = applyUnitySubst(it.t1, eq.t1, eq.t2);
+             it.t2 = applyUnitySubst(it.t2, eq.t1, eq.t2);
+           }
           continue;
         } else {
           //    cerr << "subsort no: " << eq.t1 << " " << eq.t2 << endl;
