@@ -30,7 +30,7 @@ void example() {
   FastTerm t2 = newFuncTerm(f, args);
 
   std::cout << "AC-Unify: " << toString(t1) << ' ' << toString(t2) << '\n';
-  FastQueryACUnify solver(t1, t2);
+  ACUnifier solver(t1, t2);
   auto ans = solver.solve();
   std::cout << "Number of unifiers: " << ans.size() << '\n';
   for (auto& subst : ans) {

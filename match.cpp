@@ -1,5 +1,5 @@
 #include "fastterm.h"
-#include "fastqueryacunify.h"
+#include "acunifier.h"
 #include <cassert>
 #include <vector>
 #include <algorithm>
@@ -47,7 +47,7 @@ vector<FastSubst> match(FastTerm subject, FastTerm pattern) {
   // char buffer2[1024];
   // printTerm(pattern, buffer2, 1024);
   //  printf("     against %s\n", buffer2);
-  auto minSubstSet = FastQueryACUnify(subject, pattern).solve();
+  auto minSubstSet = ACUnifier(subject, pattern).solve();
   for (auto &s : minSubstSet) {
     //    printf("    One solution.\n");
     for (uint i = 0; i < vars.size(); ++i) {

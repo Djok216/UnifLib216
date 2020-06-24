@@ -356,7 +356,7 @@ bool eq_term(FastTerm t1, FastTerm t2)
   return false;
 }
 
-bool eq_term_syntactic(FastTerm term1, FastTerm term2) {
+bool eq_term_syntactic(FastTerm t1, FastTerm t2) {
   assert(validFastTerm(t1));
   assert(validFastTerm(t2));
   if (isFuncTerm(t1) && isFuncTerm(t2)) {
