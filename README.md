@@ -5,11 +5,6 @@ Just add ``#include "UnifLib216.h"``to your code.
 Below is an example for the equation ``f(y1, x5, g(x4)) =? f(y2, g(x2))``
 ```C++
 // solve AC-unify: f(y1, x5, g(x4)) =? f(y2, g(x2))
-// Substitutions: 4
-// {y2 |-> f(_13, _14, g(x4)), y1 |-> _13, x5 |-> f(_14, g(x2))}
-// {y2 |-> f(_13, g(x4)), y1 |-> _13, x5 |-> g(x2)}
-// {y2 |-> f(_13, _14, g(x4)), y1 |-> f(_13, g(x2)), x5 |-> _14}
-// {y2 |-> f(_14, g(x4)), y1 |-> g(x2), x5 |-> _14}
 void example() {
   FastVar x2 = newVar("x2", fastStateSort());
   FastVar x4 = newVar("x4", fastStateSort());
