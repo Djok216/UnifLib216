@@ -296,6 +296,16 @@ FastSort getSort(FastTerm term)
   }
 }
 
+bool eq_term_list_syntactic(FastTerm *tl1, FastTerm *tl2, uint count)
+{
+  for (uint i = 0; i < count; ++i) {
+    if (!eq_term_syntactic(tl1[i], tl2[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
 bool eq_term_list(FastTerm *tl1, FastTerm *tl2, uint count)
 {
   for (uint i = 0; i < count; ++i) {
@@ -367,7 +377,7 @@ bool eq_term_syntactic(FastTerm t1, FastTerm t2) {
     }
     assert(getArity(func1) == getArity(func2));
     if (getArity(func1) == 0) return true;
-    return eq_term_list(args(t1), args(t2), getArity(func1));
+    return eq_term_list_syntactic(args(t1), args(t2), getArity(func1));
   }
   if (isVariable(t1) && isVariable(t2)) {
     return eq_var(t1, t2);
